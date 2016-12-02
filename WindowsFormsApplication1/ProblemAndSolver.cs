@@ -507,15 +507,16 @@ namespace TSP
                         }
                         // filter any children that has a b greater than the current bssf.
                         // remove those children in hopes of speeding up the algorithm
-                        for (int i = 0; i < children.Count; i++)
-                        {
-                            if (children[i].b > currSol)
-                            {
-                                children.RemoveAt(i);
-                                statesPruned += 1;
-                                i--;
-                            }
-                        }
+
+                    }
+                }
+                for (int i = 0; i < children.Count; i++)
+                {
+                    if (children[i].b > currSol)
+                    {
+                        children.RemoveAt(i);
+                        statesPruned += 1;
+                        i--;
                     }
                 }
 
