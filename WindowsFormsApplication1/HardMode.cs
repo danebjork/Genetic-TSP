@@ -9,7 +9,7 @@ namespace TSP
     /// <summary>
     /// This class is used in "hard" mode, where edges are selectively removed. - APS
     /// </summary>
-    class HardMode
+    public class HardMode
     {
         // List of edges that are removed
         private HashSet<Edge> removedEdges;

@@ -80,6 +80,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="GeneticSolver.cs" />
+    <Compile Include="GeneticChild.cs" />
+    <Compile Include="HeapPriorityQueue.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

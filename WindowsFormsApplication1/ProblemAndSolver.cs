@@ -12,14 +12,14 @@ namespace TSP
     class ProblemAndSolver
     {
 
-        private class TSPSolution
+        public class TSPSolution
         {
             /// <summary>
-            /// we use the representation [cityB,cityA,cityC] 
-            /// to mean that cityB is the first city in the solution, cityA is the second, cityC is the third 
-            /// and the edge from cityC to cityB is the final edge in the path.  
-            /// You are, of course, free to use a different representation if it would be more convenient or efficient 
-            /// for your data structure(s) and search algorithm. 
+            /// we use the representation [cityB,cityA,cityC]
+            /// to mean that cityB is the first city in the solution, cityA is the second, cityC is the third
+            /// and the edge from cityC to cityB is the final edge in the path.
+            /// You are, of course, free to use a different representation if it would be more convenient or efficient
+            /// for your data structure(s) and search algorithm.
             /// </summary>
             public ArrayList
                 Route;
@@ -34,14 +34,14 @@ namespace TSP
             }
 
             /// <summary>
-            /// Compute the cost of the current route.  
+            /// Compute the cost of the current route.
             /// Note: This does not check that the route is complete.
-            /// It assumes that the route passes from the last city back to the first city. 
+            /// It assumes that the route passes from the last city back to the first city.
             /// </summary>
             /// <returns></returns>
             public double costOfRoute()
             {
-                // go through each edge in the route and add up the cost. 
+                // go through each edge in the route and add up the cost.
                 int x;
                 City here;
                 double cost = 0D;
@@ -52,20 +52,20 @@ namespace TSP
                     cost += here.costToGetTo(Route[x + 1] as City);
                 }
 
-                // go from the last city to the first. 
+                // go from the last city to the first.
                 here = Route[Route.Count - 1] as City;
                 cost += here.costToGetTo(Route[0] as City);
                 return cost;
             }
         }
 
-        #region Private members 
+        #region Private members
 
         /// <summary>
         /// Default number of cities (unused -- to set defaults, change the values in the GUI form)
         /// </summary>
         // (This is no longer used -- to set default values, edit the form directly.  Open Form1.cs,
-        // click on the Problem Size text box, go to the Properties window (lower right corner), 
+        // click on the Problem Size text box, go to the Properties window (lower right corner),
         // and change the "Text" value.)
         private const int DEFAULT_SIZE = 25;
 
@@ -73,7 +73,7 @@ namespace TSP
         /// Default time limit (unused -- to set defaults, change the values in the GUI form)
         /// </summary>
         // (This is no longer used -- to set default values, edit the form directly.  Open Form1.cs,
-        // click on the Time text box, go to the Properties window (lower right corner), 
+        // click on the Time text box, go to the Properties window (lower right corner),
         // and change the "Text" value.)
         private const int TIME_LIMIT = 60;        //in seconds
 
@@ -89,16 +89,16 @@ namespace TSP
         /// </summary>
         private City[] Cities;
         /// <summary>
-        /// a route through the current problem, useful as a temporary variable. 
+        /// a route through the current problem, useful as a temporary variable.
         /// </summary>
         private ArrayList Route;
         /// <summary>
-        /// best solution so far. 
+        /// best solution so far.
         /// </summary>
-        private TSPSolution bssf; 
+        private TSPSolution bssf;
 
         /// <summary>
-        /// how to color various things. 
+        /// how to color various things.
         /// </summary>
         private Brush cityBrushStartStyle;
         private Brush cityBrushStyle;
@@ -106,12 +106,12 @@ namespace TSP
 
 
         /// <summary>
-        /// keep track of the seed value so that the same sequence of problems can be 
-        /// regenerated next time the generator is run. 
+        /// keep track of the seed value so that the same sequence of problems can be
+        /// regenerated next time the generator is run.
         /// </summary>
         private int _seed;
         /// <summary>
-        /// number of cities to include in a problem. 
+        /// number of cities to include in a problem.
         /// </summary>
         private int _size;
 
@@ -121,7 +121,7 @@ namespace TSP
         private HardMode.Modes _mode;
 
         /// <summary>
-        /// random number generator. 
+        /// random number generator.
         /// </summary>
         private Random rnd;
 
@@ -137,10 +137,10 @@ namespace TSP
         /// <summary>
         /// These three constants are used for convenience/clarity in populating and accessing the results array that is passed back to the calling Form
         /// </summary>
-        public const int COST = 0;           
+        public const int COST = 0;
         public const int TIME = 1;
         public const int COUNT = 2;
-        
+
         public int Size
         {
             get { return _size; }
@@ -155,7 +155,7 @@ namespace TSP
         #region Constructors
         public ProblemAndSolver()
         {
-            this._seed = 1; 
+            this._seed = 1;
             rnd = new Random(1);
             this._size = DEFAULT_SIZE;
             this.time_limit = TIME_LIMIT * 1000;                  // TIME_LIMIT is in seconds, but timer wants it in milliseconds
@@ -258,7 +258,7 @@ namespace TSP
         }
 
         /// <summary>
-        /// return a copy of the cities in this problem. 
+        /// return a copy of the cities in this problem.
         /// </summary>
         /// <returns>array of cities</returns>
         public City[] GetCities()
@@ -270,7 +270,7 @@ namespace TSP
 
         /// <summary>
         /// draw the cities in the problem.  if the bssf member is defined, then
-        /// draw that too. 
+        /// draw that too.
         /// </summary>
         /// <param name="g">where to draw the stuff</param>
         public void Draw(Graphics g)
@@ -282,14 +282,14 @@ namespace TSP
             // Draw lines
             if (bssf != null)
             {
-                // make a list of points. 
+                // make a list of points.
                 Point[] ps = new Point[bssf.Route.Count];
                 int index = 0;
                 foreach (City c in bssf.Route)
                 {
                     if (index < bssf.Route.Count -1)
                         g.DrawString(" " + index +"("+c.costToGetTo(bssf.Route[index+1]as City)+")", labelFont, cityBrushStartStyle, new PointF((float)c.X * width + 3F, (float)c.Y * height));
-                    else 
+                    else
                         g.DrawString(" " + index +"("+c.costToGetTo(bssf.Route[0]as City)+")", labelFont, cityBrushStartStyle, new PointF((float)c.X * width + 3F, (float)c.Y * height));
                     ps[index++] = new Point((int)(c.X * width) + CITY_ICON_SIZE / 2, (int)(c.Y * height) + CITY_ICON_SIZE / 2);
                 }
@@ -300,7 +300,7 @@ namespace TSP
                     g.FillEllipse(cityBrushStartStyle, (float)Cities[0].X * width - 1, (float)Cities[0].Y * height - 1, CITY_ICON_SIZE + 2, CITY_ICON_SIZE + 2);
                 }
 
-                // draw the last line. 
+                // draw the last line.
                 g.DrawLine(routePenStyle, ps[0], ps[ps.Length - 1]);
             }
 
@@ -313,7 +313,7 @@ namespace TSP
         }
 
         /// <summary>
-        ///  return the cost of the best solution so far. 
+        ///  return the cost of the best solution so far.
         /// </summary>
         /// <returns></returns>
         public double costOfBssf ()
@@ -321,12 +321,12 @@ namespace TSP
             if (bssf != null)
                 return (bssf.costOfRoute());
             else
-                return -1D; 
+                return -1D;
         }
 
         /// <summary>
         /// This is the entry point for the default solver
-        /// which just finds a valid random tour 
+        /// which just finds a valid random tour
         /// </summary>
         /// <returns>results array for GUI that contains three ints: cost of solution, time spent to find solution, number of solutions found during search (not counting initial BSSF estimate)</returns>
         public string[] defaultSolveProblem()
@@ -354,7 +354,7 @@ namespace TSP
                     perm[swap] = temp;
                 }
                 Route.Clear();
-                for (i = 0; i < Cities.Length; i++)                            // Now build the route using the random permutation 
+                for (i = 0; i < Cities.Length; i++)                            // Now build the route using the random permutation
                 {
                     Route.Add(Cities[perm[i]]);
                 }
@@ -618,14 +618,20 @@ namespace TSP
         {
             string[] results = new string[3];
 
-            // TODO: Add your implementation for your advanced solver here.
+			GeneticSolver geneticSolver = new GeneticSolver(ref Cities);
 
-            results[COST] = "not implemented";    // load results into array here, replacing these dummy values
-            results[TIME] = "-1";
-            results[COUNT] = "-1";
+
+			geneticSolver.solve();
+
+
+
+            results[COST]  = geneticSolver.getCost();
+            results[TIME]  = geneticSolver.getTime();
+            results[COUNT] = geneticSolver.getCount();
 
             return results;
         }
+
         #endregion
     }
 }
