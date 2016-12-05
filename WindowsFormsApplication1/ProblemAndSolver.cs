@@ -337,7 +337,10 @@ namespace TSP
             Route = new ArrayList();
             Random rnd = new Random();
             Stopwatch timer = new Stopwatch();
+            Byte test = 20;
 
+            Console.WriteLine(test);
+            
             timer.Start();
 
             do
@@ -618,10 +621,41 @@ namespace TSP
         {
             string[] results = new string[3];
 
-			GeneticSolver geneticSolver = new GeneticSolver(ref Cities);
+            // run 500 times and add to children, use the default algorithm in TSP
+            int population = 5;
+            int count = 0;
+            int rand1, rand2;
+            // save the two random children for genetic variation
+            Random rnd = new Random();
+            rand1 = rnd.Next(0, population);
+            do
+            {
+                rand2 = rnd.Next(0, population);
+            } while (rand1 == rand2);
+
+            // finding random solution = O(n)
+            GeneticChild b1;
+            GeneticChild b2;
+            GeneticChild r1;
+            GeneticChild r2;
+            Route.ToArray();
+            double currSol = Double.PositiveInfinity;
+
+            for (int i = 0; i < population; i++)
+            {
+                double tempSol = Convert.ToInt32(defaultSolveProblem()[0]);
+                if (tempSol < currSol)
+                {
+                    currSol = tempSol;
+                    count += 1;
+                    Console.WriteLine(Route);
+                    Console.WriteLine(Route.ToArray());
+                }
+            }
+            GeneticSolver geneticSolver = new GeneticSolver(ref Cities);
 
 
-			geneticSolver.solve();
+            //geneticSolver.solve();
 
 
 
@@ -630,8 +664,8 @@ namespace TSP
             results[COUNT] = geneticSolver.getCount();
 
             return results;
-        }
 
+        }
         #endregion
     }
 }

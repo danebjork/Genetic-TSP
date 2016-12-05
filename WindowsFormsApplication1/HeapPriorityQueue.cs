@@ -23,7 +23,7 @@ namespace TSP
     // O(log(V))
     public bool insert(GeneticChild node)
     {
-      if (node.bound < currentLowerBound)
+      if (node.score < currentLowerBound)
       {
         nodes.Add(node);
 
@@ -83,7 +83,7 @@ namespace TSP
 
     public bool ShouldRemoveNode(GeneticChild node)
     {
-      return node.bound >= currentLowerBound;
+      return node.score >= currentLowerBound;
     }
 
   }
