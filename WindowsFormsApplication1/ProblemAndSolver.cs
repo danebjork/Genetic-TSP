@@ -337,9 +337,6 @@ namespace TSP
             Route = new ArrayList();
             Random rnd = new Random();
             Stopwatch timer = new Stopwatch();
-            Byte test = 20;
-
-            Console.WriteLine(test);
             
             timer.Start();
 
@@ -655,7 +652,7 @@ namespace TSP
             GeneticSolver geneticSolver = new GeneticSolver(ref Cities);
 
 
-            //geneticSolver.solve();
+            geneticSolver.solve();
 
 
 

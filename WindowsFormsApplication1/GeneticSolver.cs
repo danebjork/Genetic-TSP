@@ -13,7 +13,9 @@ namespace TSP
 
         //private List<GeneticChild> children; Don't need this if we just save the 4 children we want
 		private GeneticChild best1Child;
+        private double b1Score;
         private GeneticChild best2Child;
+        private double b2Score;
         private GeneticChild rand1Child;
         private GeneticChild rand2Child;
 
@@ -21,9 +23,12 @@ namespace TSP
         {
             this.initialCityArray = cities;
             this.Size = cities.Length;
+            b1Score = Double.PositiveInfinity;
+            b2Score = Double.PositiveInfinity;
 
         }
 
+        // Don't know if we'll need this anymore
         public GeneticSolver(ref City[] cities, GeneticChild b1, GeneticChild b2, GeneticChild r1, GeneticChild r2)
 		{
             this.initialCityArray = cities;
@@ -73,6 +78,7 @@ namespace TSP
 
 		public void solve()
 		{
+            initialRound();
 			for (int generation = 0; generation < Generations; generation++)
 			{
 				// delete all other children
@@ -91,8 +97,8 @@ namespace TSP
 		public void initialRound()
 		{
 
-            // run 500 times and add to children, use the default algorithm in TSP
-            int population = 500;
+            // run 500 times and add to children, used a modified /TSP default algorithm.
+            int population = 1000;
             int rand1, rand2;
             // save the two random children for genetic variation
             Random rnd = new Random();
@@ -102,23 +108,36 @@ namespace TSP
                 rand2 = rnd.Next(0, population);
             }
             while (rand1 == rand2);
+            Console.WriteLine("Rand1: {0}, Rand2: {1}", rand1, rand2);
+            int i = 0;
+            while(b2Score == Double.PositiveInfinity || i < population)
+            {
+                // add to children
+                GeneticChild temp = randomSolver();
+                if(temp.score < b1Score)
+                {
+                    b2Score = b1Score;
+                    b1Score = temp.score;
+                    best2Child = best1Child;
+                    best1Child = temp;
 
-            for (int i = 0; i < 500; i++)
-			{
-				// add to children
-                
+                }
                 if(i == rand1)
                 {
-
+                    rand1Child = temp;
                 }
                 if(i == rand2)
                 {
-
+                    rand2Child = temp;
                 }
-
+                i++;
 
 			}
-		}
+            Console.WriteLine("Best 1: {0}", best1Child.score);
+            Console.WriteLine("Best 2: {0}", best2Child.score);
+            Console.WriteLine("Rand 1: {0}", rand1Child.score);
+            Console.WriteLine("Rand 2: {0}", rand1Child.score);
+        }
 
 
 		public GeneticChild[] cross(GeneticChild childA, GeneticChild childB)
