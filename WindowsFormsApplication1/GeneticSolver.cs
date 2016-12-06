@@ -11,7 +11,7 @@ namespace TSP
 		private City[] initialCityArray;
 		private int Size;
         Random rnd;
-		private static int Generations = 100;
+		private static int Generations = 200;
         private int childNum;
         private int count;
         private double bssf;
@@ -56,7 +56,7 @@ namespace TSP
             this.rnd = new Random();
             // This represents the number of children attempted to create in
             // each of 10 functions. If iterations = 50, then children is about 500.
-            this.iterations = 25; 
+            this.iterations = 20; 
 
         }
 
@@ -104,8 +104,8 @@ namespace TSP
             initialRound();
 			for (int generation = 0; generation < Generations; generation++)
 			{
-                Console.WriteLine("GENERATION: {0}", generation);
-                int makeRandom = 100;
+                Console.WriteLine("GENERATION: {0}, score: {1}", generation, bssf);
+                int makeRandom = 300;
                 // choose 4 best
                 b1Score = Double.PositiveInfinity;
                 b2Score = Double.PositiveInfinity;
@@ -169,7 +169,6 @@ namespace TSP
                 cross(parent5, parent8);
                 cross(parent5, parent9);
                 cross(parent5, parent10);
-
                 //cross 6
                 cross(parent6, parent7);
                 cross(parent6, parent8);
@@ -301,19 +300,23 @@ namespace TSP
                 // swapping nodes then
                 // add to children
                 byte[] newGene = new byte[child.gene.Length];
-                int rand1, rand2;
-                do
-                {
-                    rand1 = rnd.Next(0, child.gene.Length);
-                    rand2 = rnd.Next(0, child.gene.Length);
-                }
-                while (rand2 == rand1);
-
-                // get the city at that index
                 newGene = (byte[])child.gene.Clone();
-                byte city = newGene[rand1];
-                newGene[rand1] = newGene[rand2];
-                newGene[rand2] = city;
+                int rand1, rand2, randIter;
+                randIter = rnd.Next(1, 10);
+                for(int j = 0; j < randIter; j++)
+                {
+                    do
+                    {
+                        rand1 = rnd.Next(0, child.gene.Length);
+                        rand2 = rnd.Next(0, child.gene.Length);
+                    }
+                    while (rand2 == rand1);
+
+                    // get the city at that index
+                    byte city = newGene[rand1];
+                    newGene[rand1] = newGene[rand2];
+                    newGene[rand2] = city;
+                }
                 GeneticChild temp = new GeneticChild(newGene, newGene.Length);
                 checkChild(temp);
 
