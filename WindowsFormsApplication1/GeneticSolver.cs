@@ -21,10 +21,22 @@ namespace TSP
         private double b1Score;
         private GeneticChild best2Child;
         private double b2Score;
+        private GeneticChild best3Child;
+        private double b3Score;
+        private GeneticChild best4Child;
+        private double b4Score;
+        private GeneticChild best5Child;
+        private double b5Score;
         private GeneticChild rand1Child;
         private int rand1Index;
         private GeneticChild rand2Child;
         private int rand2Index;
+        private GeneticChild rand3Child;
+        private int rand3Index;
+        private GeneticChild rand4Child;
+        private int rand4Index;
+        private GeneticChild rand5Child;
+        private int rand5Index;
         private Stopwatch timer;
 
         private int iterations;
@@ -38,22 +50,15 @@ namespace TSP
             this.Size = cities.Length;
             b1Score = Double.PositiveInfinity;
             b2Score = Double.PositiveInfinity;
+            b3Score = Double.PositiveInfinity;
+            b4Score = Double.PositiveInfinity;
+            b5Score = Double.PositiveInfinity;
             this.rnd = new Random();
-            this.iterations = 100; // Change this as some function of size/depth
+            // This represents the number of children attempted to create in
+            // each of 10 functions. If iterations = 50, then children is about 500.
+            this.iterations = 25; 
 
         }
-
-        // Don't know if we'll need this anymore
-  //      public GeneticSolver(ref City[] cities, GeneticChild b1, GeneticChild b2, GeneticChild r1, GeneticChild r2)
-		//{
-  //          this.initialCityArray = cities;
-		//	this.Size = cities.Length;
-  //          this.best1Child = b1;
-  //          this.best2Child = b2;
-  //          this.rand1Child = r1;
-  //          this.rand2Child = r2;
-
-		//}
 
         private GeneticChild randomSolver()
         {
@@ -99,46 +104,100 @@ namespace TSP
             initialRound();
 			for (int generation = 0; generation < Generations; generation++)
 			{
-                //Console.WriteLine("GENERATION: {0}", generation);
-                //Console.Write("SEQ 1: ");
-                //Console.WriteLine(string.Join(",", best1Child.gene));
-                //Console.WriteLine(best1Child.valid);
-                //Console.Write("SEQ 2: ");
-                //Console.WriteLine(string.Join(",", best2Child.gene));
-                //Console.WriteLine(best2Child.valid);
-                // delete all other children
+                Console.WriteLine("GENERATION: {0}", generation);
+                int makeRandom = 100;
                 // choose 4 best
                 b1Score = Double.PositiveInfinity;
                 b2Score = Double.PositiveInfinity;
+                b3Score = Double.PositiveInfinity;
+                b4Score = Double.PositiveInfinity;
+                b5Score = Double.PositiveInfinity;
                 GeneticChild parent1 = this.best1Child;
                 GeneticChild parent2 = this.best2Child;
-                GeneticChild parent3 = this.rand1Child;
-                GeneticChild parent4 = this.rand2Child;
-                rand1Index = rnd.Next(0, 500);
-                rand2Index = rnd.Next(0, 500);
+                GeneticChild parent3 = this.best3Child;
+                GeneticChild parent4 = this.best4Child;
+                GeneticChild parent5 = this.best5Child;
+                GeneticChild parent6 = this.rand1Child;
+                GeneticChild parent7 = this.rand2Child;
+                GeneticChild parent8 = this.rand3Child;
+                GeneticChild parent9 = this.rand4Child;
+                GeneticChild parent10 = this.rand5Child;
+                rand1Index = rnd.Next(0, makeRandom);
+                rand2Index = rnd.Next(0, makeRandom);
+                rand3Index = rnd.Next(0, makeRandom);
+                rand4Index = rnd.Next(0, makeRandom);
+                rand5Index = rnd.Next(0, makeRandom);
                 childNum = 0;
                 // cross each of the parents with each other
+                // cross 1
                 cross(parent1, parent2);
                 cross(parent1, parent3);
                 cross(parent1, parent4);
+                cross(parent1, parent5);
+                cross(parent1, parent6);
+                cross(parent1, parent7);
+                cross(parent1, parent8);
+                cross(parent1, parent9);
+                cross(parent1, parent10);
+                // cross 2
                 cross(parent2, parent3);
                 cross(parent2, parent4);
+                cross(parent2, parent5);
+                cross(parent2, parent6);
+                cross(parent2, parent7);
+                cross(parent2, parent8);
+                cross(parent2, parent9);
+                cross(parent2, parent10);
+                //cross 3
                 cross(parent3, parent4);
+                cross(parent3, parent5);
+                cross(parent3, parent6);
+                cross(parent3, parent7);
+                cross(parent3, parent8);
+                cross(parent3, parent9);
+                cross(parent3, parent10);
+                //cross 4
+                cross(parent4, parent5);
+                cross(parent4, parent6);
+                cross(parent4, parent7);
+                cross(parent4, parent8);
+                cross(parent4, parent9);
+                cross(parent4, parent10);
+                //cross 5
+                cross(parent5, parent6);
+                cross(parent5, parent7);
+                cross(parent5, parent8);
+                cross(parent5, parent9);
+                cross(parent5, parent10);
+
+                //cross 6
+                cross(parent6, parent7);
+                cross(parent6, parent8);
+                cross(parent6, parent9);
+                cross(parent6, parent10);
+                //cross 7
+                cross(parent7, parent8);
+                cross(parent7, parent9);
+                cross(parent7, parent10);
+                //cross 8
+                cross(parent8, parent9);
+                cross(parent8, parent10);
+                //cross 9 and 10
+                cross(parent9, parent10);
+
                 // mutate each of the parents into children
                 mutate(parent1);
                 mutate(parent2);
                 mutate(parent3);
                 mutate(parent4);
-
-
-                // cross the 4 best making 16 routes
-
-                // take the 20 resulting paths then mutate each 20 times making 400
+                mutate(parent5);
+                mutate(parent6);
+                mutate(parent7);
+                mutate(parent8);
+                mutate(parent9);
+                mutate(parent10);
             }
             timer.Stop();
-
-            //Console.WriteLine("BSSF: {0}", bssf);
-			// return best path
 		}
 
 
@@ -151,17 +210,17 @@ namespace TSP
             HashSet<double> test = new HashSet<double>();
             // save the two random children for genetic variation
             Random rnd = new Random();
-            rand1Index = rnd.Next(0, population);
-            do
-            {
-                rand2Index = rnd.Next(0, population);
-            }
-            while (rand1Index == rand2Index);
-            while(b2Score == Double.PositiveInfinity || childNum < population)
+            rand1Index = rnd.Next(0, population/2);
+            rand2Index = rnd.Next(0, population/2);
+            rand3Index = rnd.Next(0, population/2);
+            rand4Index = rnd.Next(0, population/2);
+            rand5Index = rnd.Next(0, population/2);
+            while (b5Score == Double.PositiveInfinity || childNum < population)
             {
                 // add to children
                 GeneticChild temp = randomSolver();
                 checkChild(temp);
+                Console.WriteLine(b5Score);
 			}
             //Console.WriteLine(string.Join(",", test));
             //Console.WriteLine("Best 1: {0}", best1Child.score);
@@ -273,8 +332,14 @@ namespace TSP
                 childNum += 1;
                 if (temp.score < b1Score)
                 {
+                    best5Child = best4Child;
+                    best4Child = best3Child;
+                    best3Child = best2Child;
                     best2Child = best1Child;
                     best1Child = temp;
+                    b5Score = b4Score;
+                    b4Score = b3Score;
+                    b3Score = b2Score;
                     b2Score = b1Score;
                     b1Score = temp.score;
                     if (b1Score < bssf)
@@ -291,6 +356,18 @@ namespace TSP
                 if (childNum == rand2Index)
                 {
                     rand2Child = temp;
+                }
+                if (childNum == rand3Index)
+                {
+                    rand3Child = temp;
+                }
+                if (childNum == rand4Index)
+                {
+                    rand4Child = temp;
+                }
+                if (childNum == rand5Index)
+                {
+                    rand5Child = temp;
                 }
             }
         }
