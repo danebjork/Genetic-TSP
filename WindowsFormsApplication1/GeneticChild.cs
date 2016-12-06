@@ -7,11 +7,11 @@ namespace TSP
 {
 	public class GeneticChild
 	{
-		public Byte[] gene;
+		public byte[] gene;
 		public double score;
         public bool valid;
 
-		public GeneticChild(Byte[] gene, int cityNum)
+		public GeneticChild(byte[] gene, int cityNum)
 		{
             this.gene = gene;
             validateGene(cityNum);
@@ -39,8 +39,12 @@ namespace TSP
             // if they are equal, check for duplicates
             else
             {
-                if (this.gene.Distinct().Count() != this.gene.Length)
+                //var groups = this.gene.GroupBy(v => v);
+                var groups = new HashSet<byte>(this.gene);
+                if (groups.Count < this.gene.Length)
                 {
+                    //Console.WriteLine("GROUP: {0}", groups.Count());
+                    //Console.WriteLine("GENE LENGTH: {0}", this.gene.Length);
                     this.valid = false;
                 }
             }
