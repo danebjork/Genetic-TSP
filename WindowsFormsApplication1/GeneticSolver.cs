@@ -10,7 +10,7 @@ namespace TSP
 		private City[] initialCityArray;
 		private int Size;
         Random rnd;
-		private static int Generations = 10;
+		private static int Generations = 20;
         private int childNum;
 
         private double bssf;
@@ -36,7 +36,7 @@ namespace TSP
             b1Score = Double.PositiveInfinity;
             b2Score = Double.PositiveInfinity;
             this.rnd = new Random();
-            this.iterations = 100; // Change this as some function of size/depth
+            this.iterations = 500; // Change this as some function of size/depth
 
         }
 
@@ -79,7 +79,7 @@ namespace TSP
                 if (child.valid)
                 {
                     // if the child was valid, calculate a score
-                    child.calcScore(this.initialCityArray);
+                    child.calcScore(ref this.initialCityArray);
                 }
                 // not sure if we should keep the count here.
                 // count++;
@@ -93,13 +93,13 @@ namespace TSP
             initialRound();
 			for (int generation = 0; generation < Generations; generation++)
 			{
-                Console.WriteLine("GENERATION: {0}", generation);
-                Console.Write("SEQ 1: ");
-                Console.WriteLine(string.Join(",", best1Child.gene));
-                Console.WriteLine(best1Child.valid);
-                Console.Write("SEQ 2: ");
-                Console.WriteLine(string.Join(",", best2Child.gene));
-                Console.WriteLine(best2Child.valid);
+                //Console.WriteLine("GENERATION: {0}", generation);
+                //Console.Write("SEQ 1: ");
+                //Console.WriteLine(string.Join(",", best1Child.gene));
+                //Console.WriteLine(best1Child.valid);
+                //Console.Write("SEQ 2: ");
+                //Console.WriteLine(string.Join(",", best2Child.gene));
+                //Console.WriteLine(best2Child.valid);
                 // delete all other children
                 // choose 4 best
                 b1Score = Double.PositiveInfinity;
@@ -114,15 +114,15 @@ namespace TSP
                 // cross each of the parents with each other
                 cross(parent1, parent2);
                 cross(parent1, parent3);
-                //cross(parent1, parent4);
-                //cross(parent2, parent3);
-                //cross(parent2, parent4);
-                //cross(parent3, parent4);
+                cross(parent1, parent4);
+                cross(parent2, parent3);
+                cross(parent2, parent4);
+                cross(parent3, parent4);
                 // mutate each of the parents into children
                 mutate(parent1);
                 mutate(parent2);
                 mutate(parent3);
-                //mutate(parent4);
+                mutate(parent4);
 
 
                 // cross the 4 best making 16 routes
@@ -130,7 +130,7 @@ namespace TSP
                 // take the 20 resulting paths then mutate each 20 times making 400
             }
 
-
+            //Console.WriteLine("BSSF: {0}", bssf);
 			// return best path
 		}
 
@@ -139,7 +139,7 @@ namespace TSP
 		{
 
             // run 500 times and add to children, used a modified /TSP default algorithm.
-            int population = 500;
+            int population = iterations;
             childNum = 0;
             HashSet<double> test = new HashSet<double>();
             // save the two random children for genetic variation
@@ -166,7 +166,7 @@ namespace TSP
 
 		public void cross(GeneticChild childA, GeneticChild childB)
 		{
-            Console.WriteLine(string.Join(",", childA.gene));
+            //Console.WriteLine(string.Join(",", childA.gene));
 			GeneticChild[] children = new GeneticChild[2];
 
             for(int i = 0; i < this.iterations; i++)
@@ -184,29 +184,11 @@ namespace TSP
                 }
 
                 int rand1, tempIndex;
-                //do
-                //{
                     rand1 = rnd.Next(0, newGeneB.Length);
                     // find the city in gene B as the end point
                     byte cityB = newGeneB[rand1];
                     // find the index of the end point
                     tempIndex = Array.IndexOf(newGeneA, cityB);
-                    //if(tempIndex == -1)
-                    //{
-                    //    var groups = new HashSet<byte>(newGeneA);
-                    //    Console.WriteLine("G: {0}", groups.Count());
-                    //    Console.WriteLine(string.Join(",", newGeneA));
-                    //    Console.WriteLine(childA.valid);
-                    //    Console.WriteLine(childA.gene.Length);
-                    //}
-                //    if(tempIndex == rand1)
-                //    {
-                //        Console.WriteLine("INDEX {0} == {1}", tempIndex, rand1);
-                //    }
-
-                //}
-                //while (tempIndex == rand1);
-
 
                 if(tempIndex > rand1)
                 {
@@ -280,6 +262,7 @@ namespace TSP
         {
             if (temp.valid)
             {
+                temp.calcScore(ref this.initialCityArray);
                 childNum += 1;
                 if (temp.score < b1Score)
                 {
@@ -311,10 +294,15 @@ namespace TSP
 			return 0.0;
 		}
 
+        public byte[] getBestRoute()
+        {
+            return this.bestGene;
+        }
+
 
 		public string getCost()
 		{
-			return "not implemented";
+			return bssf.ToString();
 		}
 
 		public string getTime()

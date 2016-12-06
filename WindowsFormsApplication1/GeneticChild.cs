@@ -18,7 +18,7 @@ namespace TSP
 		}
 
 
-    public void calcScore(City[] Cities)
+    public void calcScore(ref City[] Cities)
         {
             this.score = 0;
             // go through each city and add the cost to the score
