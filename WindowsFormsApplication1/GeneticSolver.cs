@@ -38,16 +38,16 @@ namespace TSP
         }
 
         // Don't know if we'll need this anymore
-        public GeneticSolver(ref City[] cities, GeneticChild b1, GeneticChild b2, GeneticChild r1, GeneticChild r2)
-		{
-            this.initialCityArray = cities;
-			this.Size = cities.Length;
-            this.best1Child = b1;
-            this.best2Child = b2;
-            this.rand1Child = r1;
-            this.rand2Child = r2;
+  //      public GeneticSolver(ref City[] cities, GeneticChild b1, GeneticChild b2, GeneticChild r1, GeneticChild r2)
+		//{
+  //          this.initialCityArray = cities;
+		//	this.Size = cities.Length;
+  //          this.best1Child = b1;
+  //          this.best2Child = b2;
+  //          this.rand1Child = r1;
+  //          this.rand2Child = r2;
 
-		}
+		//}
 
         private GeneticChild randomSolver()
         {
@@ -109,7 +109,7 @@ namespace TSP
                 rand2Index = rnd.Next(0, 1000);
                 childNum = 0;
                 // cross each of the parents with each other
-                cross(best1Child, best2Child);
+                cross(parent1, parent2);
                 //cross(best1Child, rand1Child);
                 //cross(best1Child, rand2Child);
                 //cross(best2Child, rand1Child);
@@ -215,7 +215,7 @@ namespace TSP
                     tempIndex = Array.IndexOf(newGeneA, city);
                     if(tempIndex == -1)
                     {
-                        var groups = newGeneA.GroupBy(v => v);
+                        var groups = new HashSet<byte>(newGeneA);
                         Console.WriteLine("G: {0}", groups.Count());
                         Console.WriteLine(string.Join(",", newGeneA));
                         Console.WriteLine(childA.valid);
@@ -323,21 +323,25 @@ namespace TSP
                 newGene[rand1] = newGene[rand2];
                 newGene[rand2] = city;
                 GeneticChild temp = new GeneticChild(newGene, newGene.Length);
-                childNum += 1;
-                if(temp.score < b1Score)
+                if (temp.valid)
                 {
-                    best2Child = best1Child;
-                    best1Child = temp;
-                    b1Score = temp.score;
+                    childNum += 1;
+                    if (temp.score < b1Score)
+                    {
+                        best2Child = best1Child;
+                        best1Child = temp;
+                        b1Score = temp.score;
+                    }
+                    if (childNum == rand1Index)
+                    {
+                        rand1Child = temp;
+                    }
+                    if (childNum == rand2Index)
+                    {
+                        rand1Child = temp;
+                    }
                 }
-                if(childNum == rand1Index)
-                {
-                    rand1Child = temp;
-                }
-                if (childNum == rand2Index)
-                {
-                    rand1Child = temp;
-                }
+
                 //children[i] = temp;
 
             }

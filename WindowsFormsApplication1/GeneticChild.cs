@@ -32,6 +32,7 @@ namespace TSP
         {
             // check if the numbers of cities in the array equal the number of cities
             // that are required in the solution
+            this.valid = true;
             if(this.gene.Length != cityNum)
             {
                 this.valid = false;
@@ -41,15 +42,13 @@ namespace TSP
             {
                 //var groups = this.gene.GroupBy(v => v);
                 var groups = new HashSet<byte>(this.gene);
-                if (groups.Count < this.gene.Length)
+                if (groups.Count() != this.gene.Length)
                 {
                     //Console.WriteLine("GROUP: {0}", groups.Count());
                     //Console.WriteLine("GENE LENGTH: {0}", this.gene.Length);
                     this.valid = false;
                 }
             }
-            // otherwise, this is a valid city sequence
-            this.valid = true;
         }
 
 
