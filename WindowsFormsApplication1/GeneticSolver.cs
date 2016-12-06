@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 namespace TSP
 {
@@ -10,9 +11,9 @@ namespace TSP
 		private City[] initialCityArray;
 		private int Size;
         Random rnd;
-		private static int Generations = 20;
+		private static int Generations = 100;
         private int childNum;
-
+        private int count;
         private double bssf;
         private byte[] bestGene;
         //private List<GeneticChild> children; Don't need this if we just save the 4 children we want
@@ -24,11 +25,13 @@ namespace TSP
         private int rand1Index;
         private GeneticChild rand2Child;
         private int rand2Index;
+        private Stopwatch timer;
 
         private int iterations;
 
         public GeneticSolver(ref City[] cities)
         {
+            count = 0;
             this.bssf = Double.PositiveInfinity;
             childNum = 0;
             this.initialCityArray = cities;
@@ -36,7 +39,7 @@ namespace TSP
             b1Score = Double.PositiveInfinity;
             b2Score = Double.PositiveInfinity;
             this.rnd = new Random();
-            this.iterations = 500; // Change this as some function of size/depth
+            this.iterations = 100; // Change this as some function of size/depth
 
         }
 
@@ -55,7 +58,7 @@ namespace TSP
         private GeneticChild randomSolver()
         {
             // initialize variables
-            byte i, swap, temp, count = 0;
+            byte i, swap, temp;
             GeneticChild child;
             byte[] perm = new byte[this.Size];
             
@@ -90,6 +93,9 @@ namespace TSP
 
 		public void solve()
 		{
+            timer = new Stopwatch();
+
+            timer.Start();
             initialRound();
 			for (int generation = 0; generation < Generations; generation++)
 			{
@@ -108,8 +114,8 @@ namespace TSP
                 GeneticChild parent2 = this.best2Child;
                 GeneticChild parent3 = this.rand1Child;
                 GeneticChild parent4 = this.rand2Child;
-                rand1Index = rnd.Next(0, 1000);
-                rand2Index = rnd.Next(0, 1000);
+                rand1Index = rnd.Next(0, 500);
+                rand2Index = rnd.Next(0, 500);
                 childNum = 0;
                 // cross each of the parents with each other
                 cross(parent1, parent2);
@@ -129,6 +135,7 @@ namespace TSP
 
                 // take the 20 resulting paths then mutate each 20 times making 400
             }
+            timer.Stop();
 
             //Console.WriteLine("BSSF: {0}", bssf);
 			// return best path
@@ -139,7 +146,7 @@ namespace TSP
 		{
 
             // run 500 times and add to children, used a modified /TSP default algorithm.
-            int population = iterations;
+            int population = 2000;
             childNum = 0;
             HashSet<double> test = new HashSet<double>();
             // save the two random children for genetic variation
@@ -272,6 +279,7 @@ namespace TSP
                     b1Score = temp.score;
                     if (b1Score < bssf)
                     {
+                        count += 1;
                         bssf = b1Score;
                         bestGene = best1Child.gene;
                     }
@@ -307,12 +315,12 @@ namespace TSP
 
 		public string getTime()
 		{
-			return "-1";
-		}
+			return timer.Elapsed.ToString();
+        }
 
 		public string getCount()
 		{
-			return "-1";
+			return this.count.ToString();
 		}
 
 
