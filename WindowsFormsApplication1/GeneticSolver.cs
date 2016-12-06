@@ -13,6 +13,8 @@ namespace TSP
 		private static int Generations = 10;
         private int childNum;
 
+        private double bssf;
+        private byte[] bestGene;
         //private List<GeneticChild> children; Don't need this if we just save the 4 children we want
 		private GeneticChild best1Child;
         private double b1Score;
@@ -27,13 +29,14 @@ namespace TSP
 
         public GeneticSolver(ref City[] cities)
         {
+            this.bssf = Double.PositiveInfinity;
             childNum = 0;
             this.initialCityArray = cities;
             this.Size = cities.Length;
             b1Score = Double.PositiveInfinity;
             b2Score = Double.PositiveInfinity;
             this.rnd = new Random();
-            this.iterations = 50; // Change this as some function of size/depth
+            this.iterations = 100; // Change this as some function of size/depth
 
         }
 
@@ -104,22 +107,22 @@ namespace TSP
                 GeneticChild parent1 = this.best1Child;
                 GeneticChild parent2 = this.best2Child;
                 GeneticChild parent3 = this.rand1Child;
-                GeneticChild praent4 = this.rand2Child;
+                GeneticChild parent4 = this.rand2Child;
                 rand1Index = rnd.Next(0, 1000);
                 rand2Index = rnd.Next(0, 1000);
                 childNum = 0;
                 // cross each of the parents with each other
                 cross(parent1, parent2);
-                //cross(best1Child, rand1Child);
-                //cross(best1Child, rand2Child);
-                //cross(best2Child, rand1Child);
-                //cross(best2Child, rand2Child);
-                //cross(rand1Child, rand2Child);
+                cross(parent1, parent3);
+                //cross(parent1, parent4);
+                //cross(parent2, parent3);
+                //cross(parent2, parent4);
+                //cross(parent3, parent4);
                 // mutate each of the parents into children
-                //mutate(best1Child);
-                //mutate(best2Child);
-                //mutate(rand1Child);
-                //mutate(rand2Child);
+                mutate(parent1);
+                mutate(parent2);
+                mutate(parent3);
+                //mutate(parent4);
 
 
                 // cross the 4 best making 16 routes
@@ -136,47 +139,22 @@ namespace TSP
 		{
 
             // run 500 times and add to children, used a modified /TSP default algorithm.
-            int population = 1000;
-            int rand1, rand2;
+            int population = 500;
+            childNum = 0;
             HashSet<double> test = new HashSet<double>();
             // save the two random children for genetic variation
             Random rnd = new Random();
-            rand1 = rnd.Next(0, population);
+            rand1Index = rnd.Next(0, population);
             do
             {
-                rand2 = rnd.Next(0, population);
+                rand2Index = rnd.Next(0, population);
             }
-            while (rand1 == rand2);
-            int i = 0;
-            while(b2Score == Double.PositiveInfinity || i < population)
+            while (rand1Index == rand2Index);
+            while(b2Score == Double.PositiveInfinity || childNum < population)
             {
                 // add to children
                 GeneticChild temp = randomSolver();
-                test.Add(temp.score);
-                if (temp.valid)
-                {
-                    if (temp.score < b1Score)
-                    {
-                        b2Score = b1Score;
-                        b1Score = temp.score;
-                        best2Child = best1Child;
-                        best1Child = temp;
-
-                    }
-                    if (i == rand1)
-                    {
-                        Console.WriteLine(temp.score);
-                        rand1Child = temp;
-                    }
-                    else if (i == rand2)
-                    {
-                        Console.WriteLine(temp.score);
-                        rand2Child = temp;
-                    }
-                    i++;
-                }
-
-
+                checkChild(temp);
 			}
             //Console.WriteLine(string.Join(",", test));
             //Console.WriteLine("Best 1: {0}", best1Child.score);
@@ -206,23 +184,28 @@ namespace TSP
                 }
 
                 int rand1, tempIndex;
-                do
-                {
-                    rand1 = rnd.Next(0, newGeneA.Length);
+                //do
+                //{
+                    rand1 = rnd.Next(0, newGeneB.Length);
                     // find the city in gene B as the end point
-                    byte city = newGeneB[rand1];
+                    byte cityB = newGeneB[rand1];
                     // find the index of the end point
-                    tempIndex = Array.IndexOf(newGeneA, city);
-                    if(tempIndex == -1)
-                    {
-                        var groups = new HashSet<byte>(newGeneA);
-                        Console.WriteLine("G: {0}", groups.Count());
-                        Console.WriteLine(string.Join(",", newGeneA));
-                        Console.WriteLine(childA.valid);
-                        Console.WriteLine(childA.gene.Length);
-                    }
-                }
-                while (tempIndex == rand1);
+                    tempIndex = Array.IndexOf(newGeneA, cityB);
+                    //if(tempIndex == -1)
+                    //{
+                    //    var groups = new HashSet<byte>(newGeneA);
+                    //    Console.WriteLine("G: {0}", groups.Count());
+                    //    Console.WriteLine(string.Join(",", newGeneA));
+                    //    Console.WriteLine(childA.valid);
+                    //    Console.WriteLine(childA.gene.Length);
+                    //}
+                //    if(tempIndex == rand1)
+                //    {
+                //        Console.WriteLine("INDEX {0} == {1}", tempIndex, rand1);
+                //    }
+
+                //}
+                //while (tempIndex == rand1);
 
 
                 if(tempIndex > rand1)
@@ -246,52 +229,13 @@ namespace TSP
 
                 // check if Gene A Works
                 GeneticChild temp = new GeneticChild(newGeneA, newGeneA.Length);
-                if (temp.valid)
-                {
-                    childNum += 1;
-                    if (temp.score < b1Score)
-                    {
-                        Console.WriteLine("Cross A");
-                        best2Child = best1Child;
-                        best1Child = temp;
-                        Console.WriteLine(string.Join(",", temp.gene));
-                        b1Score = temp.score;
-
-                    }
-                    if (childNum == rand1Index)
-                    {
-                        rand1Child = temp;
-                    }
-                    if (childNum == rand2Index)
-                    {
-                        rand1Child = temp;
-                    }
-                }
+                checkChild(temp);
 
 
                 // check if Gene B works
                 temp = new GeneticChild(newGeneB, newGeneB.Length);
-                if (temp.valid)
-                {
-                    childNum += 1;
-                    if (temp.score < b1Score)
-                    {
-                        Console.WriteLine("Cross B");
-                        Console.WriteLine(string.Join(",", temp.gene));
-                        best2Child = best1Child;
-                        best1Child = temp;
-                        b1Score = temp.score;
-
-                    }
-                    if (childNum == rand1Index)
-                    {
-                        rand1Child = temp;
-                    }
-                    if (childNum == rand2Index)
-                    {
-                        rand1Child = temp;
-                    }
-                }
+                checkChild(temp);
+                
             }
 			// cross children
 
@@ -323,24 +267,7 @@ namespace TSP
                 newGene[rand1] = newGene[rand2];
                 newGene[rand2] = city;
                 GeneticChild temp = new GeneticChild(newGene, newGene.Length);
-                if (temp.valid)
-                {
-                    childNum += 1;
-                    if (temp.score < b1Score)
-                    {
-                        best2Child = best1Child;
-                        best1Child = temp;
-                        b1Score = temp.score;
-                    }
-                    if (childNum == rand1Index)
-                    {
-                        rand1Child = temp;
-                    }
-                    if (childNum == rand2Index)
-                    {
-                        rand1Child = temp;
-                    }
-                }
+                checkChild(temp);
 
                 //children[i] = temp;
 
@@ -348,6 +275,34 @@ namespace TSP
 
 			//return children;
 		}
+
+        private void checkChild(GeneticChild temp)
+        {
+            if (temp.valid)
+            {
+                childNum += 1;
+                if (temp.score < b1Score)
+                {
+                    best2Child = best1Child;
+                    best1Child = temp;
+                    b2Score = b1Score;
+                    b1Score = temp.score;
+                    if (b1Score < bssf)
+                    {
+                        bssf = b1Score;
+                        bestGene = best1Child.gene;
+                    }
+                }
+                if (childNum == rand1Index)
+                {
+                    rand1Child = temp;
+                }
+                if (childNum == rand2Index)
+                {
+                    rand2Child = temp;
+                }
+            }
+        }
 
 		public double updateCostForChild(GeneticChild child)
 		{
