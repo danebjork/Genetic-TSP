@@ -11,7 +11,7 @@ namespace TSP
 		private City[] initialCityArray;
 		private int Size;
         Random rnd;
-		private static int Generations = 200;
+		private static int Generations = 1400;
         private int childNum;
         private int count;
         private double bssf;
@@ -21,28 +21,9 @@ namespace TSP
         private GeneticChild[] bestChildren;
         private GeneticChild[] randChildren;
         private GeneticChild[] parents;
-        //private List<GeneticChild> children; Don't need this if we just save the 4 children we want
-        private GeneticChild best1Child;
-        private double b1Score;
-        private GeneticChild best2Child;
-        private double b2Score;
-        private GeneticChild best3Child;
-        private double b3Score;
-        private GeneticChild best4Child;
-        private double b4Score;
-        private GeneticChild best5Child;
-        private double b5Score;
-        private GeneticChild rand1Child;
-        private int rand1Index;
-        private GeneticChild rand2Child;
-        private int rand2Index;
-        private GeneticChild rand3Child;
-        private int rand3Index;
-        private GeneticChild rand4Child;
-        private int rand4Index;
-        private GeneticChild rand5Child;
-        private int rand5Index;
         private Stopwatch timer;
+        private int bestNum;
+        private int randNum;
 
         private int iterations;
 
@@ -53,15 +34,12 @@ namespace TSP
             childNum = 0;
             this.initialCityArray = cities;
             this.Size = cities.Length;
-            b1Score = Double.PositiveInfinity;
-            b2Score = Double.PositiveInfinity;
-            b3Score = Double.PositiveInfinity;
-            b4Score = Double.PositiveInfinity;
-            b5Score = Double.PositiveInfinity;
             this.rnd = new Random();
             // This represents the number of children attempted to create in
             // each of 10 functions. If iterations = 50, then children is about 500.
-            this.iterations = 20; 
+            this.iterations = 20;
+            this.bestNum = 4;
+            this.randNum = 4;
 
         }
 
@@ -112,11 +90,9 @@ namespace TSP
             initialRound();
 			for (int generation = 0; generation < Generations; generation++)
 			{
-                Console.WriteLine("GENERATION: {0}, Last Best: {1}, score: {2}", generation, this.bestChildren[0].score, bssf);
-                int makeRandom = 300;
+                //Console.WriteLine("GENERATION: {0}, Last Best: {1}, score: {2}", generation, this.bestChildren[0].score, bssf);
+                int makeRandom = 500;
                 // choose 4 best
-                int bestNum = 10;
-                int randNum = 10;
                 childNum = 0;
                 bestScores = new Double[bestNum];
                 randInts = new int[randNum];
@@ -168,15 +144,7 @@ namespace TSP
             HashSet<double> test = new HashSet<double>();
             // save the two random children for genetic variation
             Random rnd = new Random();
-            //rand1Index = rnd.Next(0, population/2);
-            //rand2Index = rnd.Next(0, population/2);
-            //rand3Index = rnd.Next(0, population/2);
-            //rand4Index = rnd.Next(0, population/2);
-            //rand5Index = rnd.Next(0, population/2);
             int makeRandom = 300;
-            // choose 4 best
-            int bestNum = 10;
-            int randNum = 10;
             childNum = 0;
             bestScores = new Double[bestNum];
             randInts = new int[randNum];
@@ -195,7 +163,6 @@ namespace TSP
                 // add to children
                 GeneticChild temp = randomSolver();
                 checkChild(temp);
-                Console.WriteLine(bestScores[0]);
 			}
             //Console.WriteLine(string.Join(",", test));
             //Console.WriteLine("Best 1: {0}", best1Child.score);
@@ -207,7 +174,6 @@ namespace TSP
 
 		public void cross(GeneticChild childA, GeneticChild childB)
 		{
-            //Console.WriteLine(string.Join(",", childA.gene));
 			GeneticChild[] children = new GeneticChild[2];
 
             for(int i = 0; i < this.iterations; i++)
@@ -260,16 +226,12 @@ namespace TSP
                 checkChild(temp);
                 
             }
-			// cross children
-
-			//return children;
 		}
 
         // randomly create an integer value representing the index value to mutate
         // mutate that value to a new value swapping with another value.
 		public void mutate(GeneticChild child)
-		{
-			//GeneticChild[] children = new GeneticChild[iterations];            
+		{        
 			for (int i = 0; i < this.iterations; i++)
 			{
                 // mutate the child by
@@ -278,7 +240,7 @@ namespace TSP
                 byte[] newGene = new byte[child.gene.Length];
                 newGene = (byte[])child.gene.Clone();
                 int rand1, rand2, randIter;
-                randIter = rnd.Next(1, 100);
+                randIter = rnd.Next(0, 10);
                 for(int j = 0; j < randIter; j++)
                 {
                     do
@@ -295,12 +257,7 @@ namespace TSP
                 }
                 GeneticChild temp = new GeneticChild(newGene, newGene.Length);
                 checkChild(temp);
-
-                //children[i] = temp;
-
             }
-
-			//return children;
 		}
 
         private void checkChild(GeneticChild temp)
